@@ -25,6 +25,8 @@
     "native-base": "^2.5.1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
+    "react-native-elements": "^0.19.1",
+    "react-native-modal-datetime-picker": "^5.1.0",
     "react-native-vector-icons": "^4.6.0",
     "react-navigation": "^2.2.2"
   }

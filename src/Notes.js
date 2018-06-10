@@ -28,7 +28,7 @@ export default class Notes extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
     },
     notes: {
         marginTop: 10,

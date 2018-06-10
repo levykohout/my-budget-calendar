@@ -1,13 +1,40 @@
 import React from 'react';
-import { StyleSheet, Text, View,ScrollView } from 'react-native';
+import { StyleSheet, Text, View,ScrollView,Modal,TouchableHighlight,TouchableOpacity,TextInput} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { range } from 'lodash';
-import {Icon, Container,Button,Content} from 'native-base';
+import {Icon, Container,Button,Content, Header, DatePicker,Picker,Title, Right, Body, Left} from 'native-base';
+
+import { Form, FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
+import FormEntry from'./FormEntryModal';
 
 export default class Logs extends React.Component {
+    
+    state = {
+        modalVisible: false,
+        entryType:'Expense',
+        amount: '0',
+        isDateTimePickerVisible: false,
+        title:"",
+        datePicked:"",
+      };
+    
+      setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+      };
+    
+    // _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+    _handleDatePicked = (date) => {
+        this.setState({datePicked:date})
+        this._hideDateTimePicker();
+    };
+    
     onPress(txt) {
         console.log(txt);
     };
+   
     render() {
         return (
             <ScrollView style={styles.container}>
@@ -16,9 +43,39 @@ export default class Logs extends React.Component {
                         <Text style={styles.log_text}>Create New Entry</Text>
                         <Text style={styles.log_subtext}>On Thursday, November 14</Text>
                     </View>
-                    <Button transparent noDefaultStyles={true} onPress={() => this.onPress.bind(this)} title=">">
+                   
+                    <Button transparent noDefaultStyles={true}   onPress={() => {
+                            this.setModalVisible(true);
+                            }} title=">">
                         <Icon name="arrow-forward" size={30} color="#CCC" />
                     </Button>
+                    <Modal animationType="slide" transparent={false} visible={this.state.modalVisible} onRequestClose={() => {
+                                alert('Modal has been closed.');
+                                }}>
+                           <FormEntry/>
+                               
+                              
+                                {/* <TouchableOpacity onPress={() => this.setState({ isDateTimePickerVisible: true })}>
+                                    <Text>Show DatePicker</Text>
+                                </TouchableOpacity> */}
+                            
+                                {/* <DateTimePicker
+                                    isVisible={this.state.isDateTimePickerVisible}
+                                    onConfirm={this._handleDatePicked}
+                                    onCancel={() => this.setState({ isDateTimePickerVisible: false })}
+                                /> */}
+                               
+                                
+
+                                    <Button
+                                            onPress={() => {
+                                        this.setModalVisible(!this.state.modalVisible);
+                                    }}>
+                                    <Text>Hide Modal</Text>
+                                    </Button>
+                             
+                    </Modal>
+              
                 </View>
             </ScrollView>
         );
@@ -27,7 +84,8 @@ export default class Logs extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        marginTop:22,
     },
     logs: {
         flexDirection: 'row',
