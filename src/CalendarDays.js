@@ -5,6 +5,9 @@ import { range } from 'lodash';
 import {Button,Icon } from 'native-base';
 
 export default class CalendarDays extends React.Component {
+    state = {
+      selectedDay:'',
+      };
     renderWeeks() {
         let past_month_days = range(27, 31);
         let this_month_days = range(1, 30);
@@ -39,13 +42,15 @@ export default class CalendarDays extends React.Component {
     renderDays(week_days) {
         return week_days.map((day, index) => {
             return (
-                <Button      transparent            label= {day}
+                <Button      
+                    transparent            
+                    label= {day}
                     key={index} 
-                    onPress={() => this.onPress.bind(this)} 
+                    onPress={() => this.setState({selectedDay: day.toString()})} 
                     style={styles.day}
                     noDefaultStyles={true}
                     title={day.toString()}> 
-                    <Text style={styles.day_text}>{day.toString()}</Text>  
+                    <Text style={styles.day_text}>{day.toString()}</Text>
                 </Button>
             );
         });
@@ -53,9 +58,13 @@ export default class CalendarDays extends React.Component {
     onPress(txt) {
         console.log(txt);
     };
+    onDayClicked(day) {
+        
+    };
     render() {
         return (
             <View style={styles.calendar_days}>
+            <Text>Selected Day: {this.state.selectedDay}</Text>
                 { this.renderWeeks() }
             </View>
         );

@@ -15,7 +15,7 @@ export default class Logs extends React.Component {
         amount: '0',
         isDateTimePickerVisible: false,
         title:"",
-        datePicked:"",
+        datePicked: new Date(),
       };
     
       setModalVisible(visible) {
@@ -52,20 +52,7 @@ export default class Logs extends React.Component {
                     <Modal animationType="slide" transparent={false} visible={this.state.modalVisible} onRequestClose={() => {
                                 alert('Modal has been closed.');
                                 }}>
-                           <FormEntry/>
-                               
-                              
-                                {/* <TouchableOpacity onPress={() => this.setState({ isDateTimePickerVisible: true })}>
-                                    <Text>Show DatePicker</Text>
-                                </TouchableOpacity> */}
-                            
-                                {/* <DateTimePicker
-                                    isVisible={this.state.isDateTimePickerVisible}
-                                    onConfirm={this._handleDatePicked}
-                                    onCancel={() => this.setState({ isDateTimePickerVisible: false })}
-                                /> */}
-                               
-                                
+                           <FormEntry datePicked={this.state.datePicked}/>                                               
 
                                     <Button
                                             onPress={() => {

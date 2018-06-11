@@ -2,26 +2,65 @@ import React, { Component } from 'react';
 import {Picker,StyleSheet, Text, View,ScrollView,Modal,TouchableHighlight,TouchableOpacity,TextInput} from 'react-native';
 import { Container,Button,Icon, Header, Content, DatePicker,Form, Item, Input, Label,Title, Right, Body, Left} from 'native-base';
 export default class FormEntryModal extends React.Component {
+    constructor(props){
+        super(props);
+       
+    }
     state = {
         entryType:null,
         amount: '',
         isDateTimePickerVisible: false,
         title:"",
-        datePicked:"",
+        datePicked:this.props.datePicked,
         selectedCategory:null,
+        saved: 'Save'
+
       };
+      componentWillMount() {
+        this.setState({datePicked:this.props.datePicked})
+      }
+    
+    
       _handleDatePicked = (date) => {
         this.setState({datePicked:date})
         this._hideDateTimePicker();
     };
+    displayCategory = () => {
+        if(this.state.entryType != "Income"){
+            return (<Item fixedLabel>
+            <Label>Select Category</Label>
+                <Picker
+                    mode="dropdown"
+                    placeholder="Select Entry Type"
+                    placeholderStyle={{ color: "#2874F0" }}
+                    note={false}
+                    selectedValue={this.state.selectedCategory}
+                    style={{ height: 50, width: 100 }}
+                    onValueChange={(itemValue, itemIndex) => this.setState({selectedCategory: itemValue})}>
+                    <Picker.Item label="Bill" value="Bill"/>
+                    <Picker.Item label="Expense" value="Expense" />
+                    <Picker.Item label="Income" value="Income" />
+                </Picker>
+            </Item>);
+        }
+        else{
+            return <Item></Item>
+        }
+    };
+    saveEntry(){
+       
+       this.setState({saved:'Success'});
+        
+    }
   render() {
     return (
       <Container>
-                           <Header style={styles.header}>
-                           <Button transparent>
-                        
-                           <Text>Save</Text>
-                         </Button>
+        <Header style={styles.header}>
+        <Button 
+        transparent
+        onPress={() => this.saveEntry()} >
+        <Text>{this.state.saved}</Text>
+        </Button>
          
           <Right>
             <Button transparent>
@@ -41,6 +80,7 @@ export default class FormEntryModal extends React.Component {
             </Item>
             <Item fixedLabel>
             <Label>Select Entry Type</Label>
+           
             <Picker
                                     mode="dropdown"
                                     placeholder="Select Entry Type"
@@ -53,7 +93,11 @@ export default class FormEntryModal extends React.Component {
                                     <Picker.Item label="Expense" value="Expense" />
                                     <Picker.Item label="Income" value="Income" />
                                 </Picker>
+                               
                                 </Item>
+                                    
+                                <View>{this.displayCategory()}</View> 
+                              
             <Item fixedLabel>
             <Label>Amount</Label>
               <Input 
@@ -79,21 +123,7 @@ export default class FormEntryModal extends React.Component {
             onCancel={() => this.setState({ isDateTimePickerVisible: false })}
             />
             </Item>
-            <Item >
-            <Label>Category</Label>
-            <Picker
-                                    mode="dropdown"
-                                    placeholder="Select Entry Type"
-                                    placeholderStyle={{ color: "#2874F0" }}
-                                    note={false}
-                                    selectedValue={this.state.selectedCategory}
-                                    style={{ height: 50, width: 100 }}
-                                    onValueChange={(itemValue, itemIndex) => this.setState({selectedCategory: itemValue})}>
-                                    <Picker.Item label="Bill" value="Bill"/>
-                                    <Picker.Item label="Expense" value="Expense" />
-                                    <Picker.Item label="Income" value="Income" />
-                                </Picker>
-            </Item>
+          
             </Form>
 
         </Content>
