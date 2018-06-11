@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
+    "eventemitter": "^0.3.3",
     "expo": "^27.0.1",
     "lodash.range": "^3.2.0",
     "native-base": "^2.5.1",

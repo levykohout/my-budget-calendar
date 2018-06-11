@@ -3,15 +3,26 @@ import { StyleSheet, Text, View,ScrollView } from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { range } from 'lodash';
 import {Icon,Button} from 'native-base';
+import EventEmitter from 'EventEmitter';
 
 export default class CalendarHeader extends React.Component {
    date = new Date();
-   months = ['January','February','March','April','May','June','July','August','September','October','November','December']
-        
+   months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  
+   eventEmitter = new EventEmitter();
     state = {
         selectedMonth : this.months[this.date.getMonth()],
         selectedYear : this.date.getFullYear(),
     };
+    componentWillMount() {
+     
+
+        if(typeof this.props.onEmitterReady === 'function') {
+            this.props.onEmitterReady(this.eventEmitter);
+        }
+      
+     this.eventEmitter.emit('month-change', {month:this.state.selectedMonth});
+      }
 
     getNextMonth(){
         var index = this.months.indexOf(this.state.selectedMonth)
@@ -22,31 +33,34 @@ export default class CalendarHeader extends React.Component {
         } 
         else{
             var newIndex = index + 1;   
-            this.setState({selectedMonth:this.months[newIndex]})
+            this.setState({selectedMonth:this.months[newIndex]},()=>  this.eventEmitter.emit('month-change', {month: this.state.selectedMonth}))
         }
+        // this.eventEmitter.emit('month-change', {month: this.state.selectedMonth});
     };
     getPreviousMonth(){
         var index = this.months.indexOf(this.state.selectedMonth)
         //check index if first of the month
         if(index === 0){
-            this.setState({selectedMonth:this.months[11]})
-            this.setState({selectedYear:(this.state.selectedYear - 1)});
+            this.setState({selectedMonth:this.months[11]}, ()=>  this.eventEmitter.emit('month-change', {month: this.state.selectedMonth}))
+            this.setState({selectedYear:(this.state.selectedYear - 1)}, () => this.eventEmitter.emit('year-change', {year:this.state.selectedYear}));
         } 
         else{
             var newIndex = index - 1;
-            this.setState({selectedMonth:this.months[newIndex]})
+            this.setState({selectedMonth:this.months[newIndex]}, () =>  this.eventEmitter.emit('month-change', {month: this.state.selectedMonth}))
         }
-        
+
     };
 
     getNextYear(){
         //check for leap year
-        this.setState({selectedYear:(this.state.selectedYear + 1)});
+        this.setState({selectedYear:(this.state.selectedYear + 1)},() => this.eventEmitter.emit('year-change', {year:this.state.selectedYear}));
+        //this.eventEmitter.emit('year-change', {year:this.state.selectedYear});
     }
 
     getPreviousYear(){
         //check for leap year
-        this.setState({selectedYear:(this.state.selectedYear - 1)});
+        this.setState({selectedYear:(this.state.selectedYear - 1)},() => this.eventEmitter.emit('year-change', {year:this.state.selectedYear}));
+       // this.eventEmitter.emit('year-change', {year:this.state.selectedYear});
     }
 
     render() {
