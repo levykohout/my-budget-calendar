@@ -21,7 +21,7 @@ export default class CalendarHeader extends React.Component {
             this.props.onEmitterReady(this.eventEmitter);
         }
       
-     this.eventEmitter.emit('month-change', {month:this.state.selectedMonth});
+     this.eventEmitter.emit('month-change', { month:this.state.selectedMonth});
       }
 
     getNextMonth(){

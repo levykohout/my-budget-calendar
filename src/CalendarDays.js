@@ -5,23 +5,46 @@ import { range } from 'lodash';
 import {Button,Icon } from 'native-base';
 
 export default class CalendarDays extends React.Component {
+    constructor(props){
+        super(props)
     state = {
       selectedDay:'',
+      selectedMonth: this.props.selectedMonth,
+      selectedYear: this.props.selectedYear,
       };
+    }
+      months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  
     renderWeeks() {
-        let past_month_days = range(27, 31);
-        let this_month_days = range(1, 30);
+        let past_month_days = range(this.getPastMonthLowRange(),  this.getDaysInMonth(this.getPastMonthIndex(),this.props.selectedYear));
+        let this_month_days = range(1, this.getDaysInMonth(this.getMonthIndex(),this.props.selectedYear));
      
-        let days = past_month_days.concat(past_month_days, this_month_days);
+        let days = past_month_days.concat(this_month_days);
         let grouped_days = this.getWeeksArray(days);
      
         return grouped_days.map((week_days, index) => {
             return (
                 <View key={index} style={styles.week_days}>
-                    { this.renderDays(week_days) }              
+                    { this.renderDays(week_days) }  
                 </View>
             );
         });
+    };
+    getPastMonthLowRange(){
+      return (this.getDaysInMonth(this.getPastMonthIndex(),this.props.selectedYear) - this.getDayOfWeek());
+    };
+    getDayOfWeek(){
+        return( (new Date(this.props.selectedYear,this.getPastMonthIndex(), 1)).getDay());
+    };
+    getMonthIndex(){
+        return(this.months.indexOf(this.props.selectedMonth))
+    };
+    getPastMonthIndex(){
+        return(this.months.indexOf(this.props.selectedMonth)-1)
+    }
+
+    getDaysInMonth(month,year){
+        return ((new Date(year, month+1, 0)).getDate());
     };
     getWeeksArray(days) {
         var weeks_r = [];
@@ -64,7 +87,7 @@ export default class CalendarDays extends React.Component {
     render() {
         return (
             <View style={styles.calendar_days}>
-            <Text>Selected Day: {this.state.selectedDay}</Text>
+            {/* <Text>Selected Day: {this.state.selectedDay}</Text> */}
                 { this.renderWeeks() }
             </View>
         );

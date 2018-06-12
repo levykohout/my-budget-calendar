@@ -13,10 +13,12 @@ import EventEmitter from 'EventEmitter';
 
 
 export default class CalendarScreen extends React.Component {
- 
+    date = new Date();
+    months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+   
     state={
-        selectedMonth:'January',
-        selectedYear:'2018',
+        selectedMonth : this.months[this.date.getMonth()],
+        selectedYear : this.date.getFullYear(),
     }
     static navigationOptions = {
         headerTitle:<Header/>
@@ -42,19 +44,11 @@ export default class CalendarScreen extends React.Component {
       
       return (
         <ScrollView style={styles.container}>
-      
             <CalendarHeader onEmitterReady={(emitter) => this.eventEmitter = emitter} />
-           <View style={styles.container}>
-               <Text>{this.state.selectedMonth}</Text>
-               </View>
-         
-            <WeekDays/>
-            <CalendarDays/>
+            <WeekDays />
+            <CalendarDays selectedMonth={this.state.selectedMonth} selectedYear = {this.state.selectedYear}/>
             <Notes/>
             <Logs/>
-            <View style={styles.container}>
-               <Text style={styles.log_text}>{this.state.selectedYear}</Text>
-               </View>
         </ScrollView>
       );
     }
