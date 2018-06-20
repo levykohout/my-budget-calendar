@@ -16,8 +16,8 @@ export default class CalendarDays extends React.Component {
       months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   
     renderWeeks() {
-        let past_month_days = range(this.getPastMonthLowRange(),  this.getDaysInMonth(this.getPastMonthIndex(),this.props.selectedYear));
-        let this_month_days = range(1, this.getDaysInMonth(this.getMonthIndex(),this.props.selectedYear));
+        let past_month_days = range(this.getPastMonthLowRange(),  (this.pastMonthNumberofDays()+1));
+        let this_month_days = range(1, (this.selectedMonthNumberofDays()+1));
      
         let days = past_month_days.concat(this_month_days);
         let grouped_days = this.getWeeksArray(days);
@@ -30,27 +30,41 @@ export default class CalendarDays extends React.Component {
             );
         });
     };
+
+    //gets the low range of previous month by getting it's last day - day of the week of next month
     getPastMonthLowRange(){
-      return (this.getDaysInMonth(this.getPastMonthIndex(),this.props.selectedYear) - this.getDayOfWeek());
+      return (this.pastMonthNumberofDays() - (this.getDayOfWeek()-1));
     };
+
+    pastMonthNumberofDays(){
+        return this.getDaysInMonth(this.getPastMonthIndex(),this.props.selectedYear)
+    }
+    selectedMonthNumberofDays(){
+        return this.getDaysInMonth(this.getMonthIndex(),this.props.selectedYear)
+    }
+    //gets day of the week for the first day of selected month and year month index zero based, get day zero based
+    //new Date(year, monthIndex, day)
     getDayOfWeek(){
-        return( (new Date(this.props.selectedYear,this.getPastMonthIndex(), 1)).getDay());
+        return((new Date(this.props.selectedYear,this.getMonthIndex(), 1)).getDay());
     };
     getMonthIndex(){
-        return(this.months.indexOf(this.props.selectedMonth))
+        return this.months.indexOf(this.props.selectedMonth);
     };
     getPastMonthIndex(){
-        return(this.months.indexOf(this.props.selectedMonth)-1)
+        return ((this.months.indexOf(this.props.selectedMonth))-1);
     }
-
+    //gets the number of days in the month by getting the date of the day before the next month.
     getDaysInMonth(month,year){
-        return ((new Date(year, month+1, 0)).getDate());
+        return ((new Date(year, (month+1), 0)).getDate());
+    };
+    getDaysInPreviousMonth(month,year){
+        return ((new Date(year, (month+1), 0)).getDate());
     };
     getWeeksArray(days) {
         var weeks_r = [];
         var seven_days = [];
         var count = 0;
-        days.forEach((day) => {
+        days.forEach((day,index) => {
           count += 1;
           seven_days.push(day);
           if(count == 7){
@@ -58,6 +72,12 @@ export default class CalendarDays extends React.Component {
             count = 0;
             seven_days = [];
           }
+          //if last item in days
+        //    if(index==days.length-1){
+        //     weeks_r.push(seven_days);
+        //     count = 0;
+        //     seven_days = [];
+        //   }
         });
         return weeks_r;
     };
@@ -87,8 +107,7 @@ export default class CalendarDays extends React.Component {
     render() {
         return (
             <View style={styles.calendar_days}>
-            {/* <Text>Selected Day: {this.state.selectedDay}</Text> */}
-                { this.renderWeeks() }
+               { this.renderWeeks() }
             </View>
         );
     }
