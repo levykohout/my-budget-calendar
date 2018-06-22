@@ -1,27 +1,64 @@
 import React, { Component } from 'react';
-import {Picker,StyleSheet, Text, View,ScrollView,Modal,TouchableHighlight,TouchableOpacity,TextInput} from 'react-native';
+import {Picker,StyleSheet, Text, View,ScrollView,Modal,TouchableHighlight,TouchableOpacity,TextInput,Animated,
+    Dimensions,TouchableWithoutFeedback} from 'react-native';
 import { Container,Button,Icon, Header, Content, DatePicker,Form, Item, Input, Label,Title, Right, Body, Left} from 'native-base';
+const { width, height } = Dimensions.get('window');
 export default class FormEntryModal extends React.Component {
     constructor(props){
         super(props);
-       
+      
     }
     state = {
+        position: new Animated.Value(this.props.isOpen ? 0 : height),
+        visible: this.props.isOpen,
         entryType:null,
-        amount: '',
+        amount: '0',
         isDateTimePickerVisible: false,
         title:"",
-        datePicked:this.props.datePicked,
         selectedCategory:null,
         saved: 'Save'
 
       };
-      componentWillMount() {
-        this.setState({datePicked:this.props.datePicked})
+
+// Handle isOpen changes to either open or close popup
+      componentWillReceiveProps(nextProps) {
+        // isOpen prop changed to true from false
+        if (!this.props.isOpen && nextProps.isOpen) {
+          this.animateOpen();
+        }
+        // isOpen prop changed to false from true
+        else if (this.props.isOpen && !nextProps.isOpen) {
+          this.animateClose();
+        }
       }
     
+       // Open popup
+  animateOpen() {
+    // Update state first
+    this.setState({ visible: true }, () => {
+      // And slide up
+      Animated.timing(
+        this.state.position, { toValue: 0 }     // top of the screen
+      ).start();
+    });
+  }
+ // Close popup
+ animateClose() {
+    // Slide down
+    Animated.timing(
+      this.state.position, { toValue: height }  // bottom of the screen
+    ).start(() => this.setState({ visible: false }));
+  }
+
+    //   componentWillMount() {
+    //     this.setState({datePicked:this.props.datePicked})
+    //   }
     
+      _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+      _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
       _handleDatePicked = (date) => {
+          console.log(date);
         this.setState({datePicked:date})
         this._hideDateTimePicker();
     };
@@ -47,14 +84,45 @@ export default class FormEntryModal extends React.Component {
             return <Item></Item>
         }
     };
-    saveEntry(){
+    saveEntry(){ handlePress = async () => {
+        fetch('https://data.advance88.hasura-app.io/v1/query', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "type": "select",
+                "args": {
+                    "table": "author",
+                    "columns": [
+                        "name"
+                    ],
+              "limit": "1"
+          }
+            })
+      })
+          .then((response) => response.json())
+          .then((responseJson) => {
+       Alert.alert("Author name at 0th index:  " + responseJson[0].name);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
        
        this.setState({saved:'Success'});
         
     }
   render() {
+         // Render nothing if not visible
+    if (!this.state.visible) {
+        return null;
+      }
+      
     return (
-      <Container>
+      <View style={styles.container}>
+       <Modal animationType="slide" transparent={false} visible={this.state.visible} onRequestClose={this.props.onClose}>
         <Header style={styles.header}>
         <Button 
         transparent
@@ -63,13 +131,15 @@ export default class FormEntryModal extends React.Component {
         </Button>
          
           <Right>
-            <Button transparent>
-        
-              <Text>Cancel</Text>
+            <Button 
+            transparent
+            onPress={this.props.onClose}>
+             <Text>Cancel</Text>
             </Button>
           </Right>
         </Header>
         <Content>
+      
             <Form>
             <Item fixedLabel>
             <Label>Title</Label>
@@ -110,35 +180,50 @@ export default class FormEntryModal extends React.Component {
             <Item fixedLabel>
             <Label>Entry Date</Label>
             <DatePicker
-            defaultDate={new Date()}
+            defaultDate={new Date(this.props.selectedYear, this.props.selectedMonth, this.props.datePicked)}
             minimumDate={new Date(2018, 1, 1)}
-            maximumDate={new Date(2018, 12, 31)}
+            maximumDate={new Date(2018, 11, 31)}
             locale={"en"}
-            timeZoneOffsetInMinutes={undefined}
             modalTransparent={false}
             animationType={"fade"}
             androidMode={"default"}
-            placeHolderText="Select date"
+            placeHolderText={(new Date(this.props.selectedYear, this.props.selectedMonth, this.props.datePicked)).toDateString()}
             onConfirm={this._handleDatePicked}
             onCancel={() => this.setState({ isDateTimePickerVisible: false })}
             />
             </Item>
           
             </Form>
-
+          
         </Content>
-      </Container>
+        </Modal>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+    // Main container
     container: {
-        flex: 1
-    },
+        flex:1,
+        ...StyleSheet.absoluteFillObject,   // fill up all screen
+              // align popup at the bottom
+        backgroundColor: 'transparent',     // transparent background
+      },
     header: {
         backgroundColor: '#329BCB',
         flexDirection: 'row',
         paddingRight:20,
     },
+     // Semi-transparent background below popup
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,   // fill up all screen
+    backgroundColor: 'black',
+    opacity: 0.5,
+  },
+  // Popup
+  modal: {
+       // take half of screen height
+    backgroundColor: 'white',
+  },
 })

@@ -3,17 +3,27 @@ import { StyleSheet, Text, View,ScrollView } from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { range } from 'lodash';
 import {Button,Icon } from 'native-base';
-
+import EventEmitter from 'EventEmitter';
 export default class CalendarDays extends React.Component {
     constructor(props){
-        super(props)
+        super(props);
+        this.handleSelectDay = this.handleSelectDay.bind(this);
     state = {
-      selectedDay:'',
+      selectedDay:this.props.selectedDay,
       selectedMonth: this.props.selectedMonth,
       selectedYear: this.props.selectedYear,
       };
     }
-      months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  eventEmitter = new EventEmitter();
+      componentDidMount() {
+        //this.eventEmitter = new EventEmitter();
+          if(typeof this.props.onEmitterReady === 'function') {
+              this.props.onEmitterReady(this.eventEmitter);
+          }
+        
+         // this.eventEmitter.emit('day-change', { day:this.state.selectedMonth});
+        }
   
     renderWeeks() {
         let past_month_days = range(this.getPastMonthLowRange(),  (this.pastMonthNumberofDays()+1));
@@ -81,7 +91,10 @@ export default class CalendarDays extends React.Component {
         });
         return weeks_r;
     };
-
+    handleSelectDay(day){
+        this.setState((prevState,props)=>{return{selectedDay:day}},() =>  this.eventEmitter.emit('day-change', {day: this.state.selectedDay}))
+     
+    }
     renderDays(week_days) {
         return week_days.map((day, index) => {
             return (
@@ -89,7 +102,7 @@ export default class CalendarDays extends React.Component {
                     transparent            
                     label= {day}
                     key={index} 
-                    onPress={() => this.setState({selectedDay: day.toString()})} 
+                    onPress={() => this.handleSelectDay(day)} 
                     style={styles.day}
                     noDefaultStyles={true}
                     title={day.toString()}> 
@@ -101,9 +114,31 @@ export default class CalendarDays extends React.Component {
     onPress(txt) {
         console.log(txt);
     };
-    onDayClicked(day) {
-        
-    };
+    handlePress = async () => { 
+        fetch('https://data.advance88.hasura-app.io/v1/query', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "type": "select",
+          "args": {
+              "table": "author",
+              "columns": [
+                  "name"
+              ],
+              "limit": "1"
+          }
+            })
+      })
+          .then((response) => response.json())
+          .then((responseJson) => {
+       Alert.alert("Author name at 0th index:  " + responseJson[0].name);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     render() {
         return (
             <View style={styles.calendar_days}>

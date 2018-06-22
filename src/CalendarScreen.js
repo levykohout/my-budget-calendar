@@ -13,6 +13,7 @@ import EventEmitter from 'EventEmitter';
 
 
 export default class CalendarScreen extends React.Component {
+   
     date=new Date();
      months=['January','February','March','April','May','June','July','August','September','October','November','December'];
     state={
@@ -20,15 +21,16 @@ export default class CalendarScreen extends React.Component {
         months:this.months,
         selectedMonth : this.months[(new Date()).getMonth()],
         selectedYear : (new Date()).getFullYear(),
+        selectedDay:(new Date()).getDate(),
     }
     static navigationOptions = {
         headerTitle:<Header/>
     };
      
       componentDidMount() {
-        //this.eventEmitter = new EventEmitter();
         this.eventEmitter.addListener('month-change', this.monthChange.bind(this));
         this.eventEmitter.addListener('year-change', this.yearChange.bind(this));
+        this.eventEmitter.addListener('day-change', this.dayChange.bind(this));
     }
     monthChange(month){
         this.setState({
@@ -40,16 +42,28 @@ export default class CalendarScreen extends React.Component {
             selectedYear: year.year
         });
     }
-   
+   dayChange(day){
+    this.setState({
+        selectedDay:day.day
+    });
+   }
     render() {
       
       return (
         <ScrollView style={styles.container}>
             <CalendarHeader onEmitterReady={(emitter) => this.eventEmitter = emitter} />
             <WeekDays />
-            <CalendarDays selectedMonth={this.state.selectedMonth} selectedYear = {this.state.selectedYear} months ={this.state.month}/>
-            <Notes/>
-            <Logs/>
+            <CalendarDays 
+                selectedMonth={this.state.selectedMonth} 
+                selectedYear = {this.state.selectedYear}
+                selectedDay ={this.state.selectedDay}
+                onEmitterReady={(emitter) => this.eventEmitter = emitter} 
+                months ={this.state.month}/>
+            <Logs 
+                datePicked={this.state.selectedDay} 
+                selectedMonth = {this.months.indexOf(this.state.selectedMonth)}
+                selectedYear = {this.state.selectedYear}
+                />
         </ScrollView>
       );
     }

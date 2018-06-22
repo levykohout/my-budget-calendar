@@ -1,68 +1,50 @@
 import React from 'react';
-import { StyleSheet, Text, View,ScrollView,Modal,TouchableHighlight,TouchableOpacity,TextInput} from 'react-native';
+import { StyleSheet, Text, View,ScrollView,TouchableHighlight,TouchableOpacity,TextInput,Animated,
+    Dimensions, TouchableWithoutFeedback} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { range } from 'lodash';
-import {Icon, Container,Button,Content, Header, DatePicker,Picker,Title, Right, Body, Left} from 'native-base';
+import {Icon, Container,Button,Content, Header,Picker,Title, Right, Body, Left} from 'native-base';
 
 import { Form, FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
 import FormEntry from'./FormEntryModal';
-
+const { width, height } = Dimensions.get('window');
 export default class Logs extends React.Component {
     
     state = {
-        modalVisible: false,
+        popupIsOpen: false,
         entryType:'Expense',
         amount: '0',
         isDateTimePickerVisible: false,
         title:"",
-        datePicked: new Date(),
-      };
-    
-      setModalVisible(visible) {
-        this.setState({modalVisible: visible});
-      };
-    
-    // _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
-
-    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
-
-    _handleDatePicked = (date) => {
-        this.setState({datePicked:date})
-        this._hideDateTimePicker();
-    };
-    
-    onPress(txt) {
-        console.log(txt);
-    };
-   
+        };
+    // on update of props query entries for the selected day the display
+      openMovie = (movie) => {
+        this.setState({
+          popupIsOpen: true,
+          movie,	
+        });
+      }
+      closeMovie = () => {
+        this.setState({
+          popupIsOpen: false,
+        });
+      }
+  
     render() {
+         
         return (
             <ScrollView style={styles.container}>
-                <View style={styles.logs}>
-                    <View>
-                        <Text style={styles.log_text}>Create New Entry</Text>
-                        <Text style={styles.log_subtext}>On Thursday, November 14</Text>
-                    </View>
-                   
-                    <Button transparent noDefaultStyles={true}   onPress={() => {
-                            this.setModalVisible(true);
-                            }} title=">">
-                        <Icon name="arrow-forward" size={30} color="#CCC" />
+                <View >
+                     {/* add display of entries for the selected day                */}
+                    <Button  rounded success noDefaultStyles={true}   onPress={this.openMovie } title=">" style={styles.textright}>
+                        <Icon  success  large name="ios-add-circle-outline" size={30} color="#CCC" />
                     </Button>
-                    <Modal animationType="slide" transparent={false} visible={this.state.modalVisible} onRequestClose={() => {
-                                alert('Modal has been closed.');
-                                }}>
-                           <FormEntry datePicked={this.state.datePicked}/>                                               
-
-                                    <Button
-                                            onPress={() => {
-                                        this.setModalVisible(!this.state.modalVisible);
-                                    }}>
-                                    <Text>Hide Modal</Text>
-                                    </Button>
-                             
-                    </Modal>
-              
+                        <FormEntry 
+                            datePicked = { this.props.datePicked}
+                            selectedYear = {this.props.selectedYear}
+                            selectedMonth = {this.props.selectedMonth}
+                            isOpen={this.state.popupIsOpen}
+                            onClose={this.closeMovie}/>                
                 </View>
             </ScrollView>
         );
@@ -71,8 +53,9 @@ export default class Logs extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+  flex:1,
         marginTop:22,
+          
     },
     logs: {
         flexDirection: 'row',
@@ -87,5 +70,8 @@ const styles = StyleSheet.create({
     },
     log_subtext: {
         fontSize: 18
-    }
+    },
+    textright: {    
+        alignSelf: 'flex-end',  
+      },
 });
