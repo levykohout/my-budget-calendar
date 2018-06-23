@@ -24,4 +24,16 @@ router.route('/entries.json')
     });
 });
 
+router.post('/', function(req, res) {
+    var entry = new Entry(req.body);
+console.log('tHIS IS REQUEST BODY', req.body);
+    entry.save().then(function(entry) {
+        res.sendStatus(201);
+    }).catch(function(err) {
+        console.log('Theres an error creating an entry', err);
+        res.sendStatus(500);
+    });
+});
+
+
 export default router;

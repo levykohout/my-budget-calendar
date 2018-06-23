@@ -23,10 +23,9 @@ export default class Logs extends React.Component {
         filteredDay:[],
         };
     // on update of props query entries for the selected day the display
-      openMovie = (movie) => {
+      openNewEntry(){
         this.setState({
           popupIsOpen: true,
-          movie,	
         });
       }
       closeMovie = () => {
@@ -121,9 +120,9 @@ export default class Logs extends React.Component {
                     <FlatList
                         data={this.state.filteredDay}
                         renderItem={({item}) => 
-                            <View>
-                                <Text>{item.title},${item.amount}</Text>
-                                <Button  rounded success noDefaultStyles={true}   onPress={()=> this.deleteItem(item)} title=">" style={styles.textright}>
+                            <View style={styles.logs}>
+                                <Text style={styles.log_text}>{item.title}  ${item.amount}</Text>
+                                <Button transparent rounded light noDefaultStyles={true}   onPress={()=> this.deleteItem(item)} title=">" style={styles.removeButton}>
                                 <Icon  name="ios-remove" />
                                 </Button>
                             </View>
@@ -131,8 +130,8 @@ export default class Logs extends React.Component {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
-                    <Button  rounded success noDefaultStyles={true}   onPress={this.openMovie } title=">" style={styles.textright}>
-                        <Icon  success  large name="ios-add-circle-outline" size={30} color="#CCC" />
+                    <Button  rounded  light noDefaultStyles={true}   onPress={()=>this.openNewEntry() } title=">" style={styles.textright}>
+                        <Icon  name="ios-add" size={30} color="#CCC" />
                     </Button>
                         <FormEntry 
                             datePicked = { this.props.datePicked}
@@ -148,25 +147,26 @@ export default class Logs extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-  flex:1,
-        marginTop:22,
-          
+  flex:1,        
     },
     logs: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        padding: 8,
         borderColor: '#F5F5F5',
         borderBottomWidth: 1
     },
     log_text: {
-        fontSize: 25
+        fontSize: 16
     },
     log_subtext: {
-        fontSize: 18
+        fontSize: 12
     },
     textright: {    
         alignSelf: 'flex-end',  
       },
+      removeButton:{
+        alignSelf: 'flex-end',  
+      }
 });

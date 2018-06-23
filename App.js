@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {createStackNavigator,} from 'react-navigation';
-import HomeScreen from './src/HomeScreen.js';
-import ProfileScreen from './src/ProfileScreen.js';
-import CalendarScreen from './src/CalendarScreen.js';
+import HomeScreen from './Client/src/HomeScreen.js';
+import ProfileScreen from './Client/src/ProfileScreen.js';
+import CalendarScreen from './Client/src/CalendarScreen.js';
 
 export default class App extends React.Component {
   render() {
