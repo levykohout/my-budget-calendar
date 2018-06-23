@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View,ScrollView,TouchableHighlight,TouchableOpacity,TextInput,Animated,
-    Dimensions, TouchableWithoutFeedback} from 'react-native';
+    Dimensions, TouchableWithoutFeedback,FlatList} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { range } from 'lodash';
 import {Icon, Container,Button,Content, Header,Picker,Title, Right, Body, Left} from 'native-base';
@@ -16,6 +16,7 @@ export default class Logs extends React.Component {
         amount: '0',
         isDateTimePickerVisible: false,
         title:"",
+        dataSource:{},
         };
     // on update of props query entries for the selected day the display
       openMovie = (movie) => {
@@ -30,12 +31,46 @@ export default class Logs extends React.Component {
         });
       }
   
+      componentDidMount() {
+        return fetch('http://192.168.1.3:3000/v1/entries.json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+  
+          this.setState({
+           dataSource: responseJson.entries,
+          }, function(){
+  
+          });
+  
+        })
+        .catch((error) =>{
+          console.error(error);
+        });
+      }
+      renderEntries() {
+        return this.state.dataSource.map((entry) => {
+            return (
+                <View  key={entry._id}>
+                <Text >{entry.title}</Text>
+                <Text >{entry.entryType}</Text>
+                <Text >{entry.amount}</Text> 
+                </View>
+            );
+        });
+    };
+    
     render() {
          
         return (
             <ScrollView style={styles.container}>
-                <View >
-                     {/* add display of entries for the selected day                */}
+              
+                <View style={{flex: 1, paddingTop:20}}>
+                    <FlatList
+                        data={this.state.dataSource}
+                        renderItem={({item}) => <Text>{item.title}, {item.amount}</Text>}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </View>
                     <Button  rounded success noDefaultStyles={true}   onPress={this.openMovie } title=">" style={styles.textright}>
                         <Icon  success  large name="ios-add-circle-outline" size={30} color="#CCC" />
                     </Button>
@@ -45,7 +80,7 @@ export default class Logs extends React.Component {
                             selectedMonth = {this.props.selectedMonth}
                             isOpen={this.state.popupIsOpen}
                             onClose={this.closeMovie}/>                
-                </View>
+              
             </ScrollView>
         );
     }

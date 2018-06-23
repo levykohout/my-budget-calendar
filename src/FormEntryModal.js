@@ -20,40 +20,6 @@ export default class FormEntryModal extends React.Component {
 
       };
 
-// Handle isOpen changes to either open or close popup
-      componentWillReceiveProps(nextProps) {
-        // isOpen prop changed to true from false
-        if (!this.props.isOpen && nextProps.isOpen) {
-          this.animateOpen();
-        }
-        // isOpen prop changed to false from true
-        else if (this.props.isOpen && !nextProps.isOpen) {
-          this.animateClose();
-        }
-      }
-    
-       // Open popup
-  animateOpen() {
-    // Update state first
-    this.setState({ visible: true }, () => {
-      // And slide up
-      Animated.timing(
-        this.state.position, { toValue: 0 }     // top of the screen
-      ).start();
-    });
-  }
- // Close popup
- animateClose() {
-    // Slide down
-    Animated.timing(
-      this.state.position, { toValue: height }  // bottom of the screen
-    ).start(() => this.setState({ visible: false }));
-  }
-
-    //   componentWillMount() {
-    //     this.setState({datePicked:this.props.datePicked})
-    //   }
-    
       _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
       _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
@@ -162,6 +128,8 @@ export default class FormEntryModal extends React.Component {
                                     <Picker.Item label="Bill" value="Bill"/>
                                     <Picker.Item label="Expense" value="Expense" />
                                     <Picker.Item label="Income" value="Income" />
+                                    <Picker.Item label="Loan" value="Loan" />
+                                    <Picker.Item label="Credit Card" value="Credit Card" />
                                 </Picker>
                                
                                 </Item>
