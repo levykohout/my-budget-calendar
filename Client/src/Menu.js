@@ -4,7 +4,7 @@ import { Container,Button,Icon, Header, Content, DatePicker,Form, Item, Input, L
 
 
 
-export default class Login extends React.Component {
+export default class Menu extends React.Component {
     static navigationOptions = {
         title:'Menu',
     };

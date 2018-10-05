@@ -4,7 +4,7 @@ import { StyleSheet, Text, View,ScrollView } from 'react-native';
 import { range } from 'lodash';
 import {Icon, Container,Button,Content} from 'native-base';
 
-export default class Transactions extends React.Component {
+export default class Summary extends React.Component {
     render() {
         return (
             <ScrollView style={styles.container}>
